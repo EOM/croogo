@@ -83,6 +83,34 @@ class SettingsFormHelper extends AppHelper {
 				'options' => $options,
 				'value' => $value,
 			));
+		} elseif (is_int(array_search('select-function', (array)explode(':', $inputType)[0])) === true) {
+		    
+		    /* function tzlist(){
+		        $l = array();
+		        foreach(timezone_abbreviations_list() as $timezone){
+                         foreach($timezone as $val){
+                                if(isset($val['timezone_id'])){
+                                        $l[$val['timezone_id']]=$val['timezone_id'];
+                                }
+                            }
+                        }
+		        return $l;
+		    }*/
+	
+            	    $func = explode(':', $inputType)[0];
+            	    $func = str_ireplace($func.':','',$inputType);
+		    if(function_exists($func)){
+		        $options = $func();
+		    }else{
+		        $options = array();
+		    }
+		    $output = $this->Form->input("Setting.$i.value", array(
+			'type' => 'select',
+			'options' => $options,
+			'value' => $setting['Setting']['value'],
+			'help' => $setting['Setting']['description'],
+			'label' => $label,
+		    ));
 		} else {
 			$output = $this->Form->input("Setting.$i.value", array(
 				'type' => $inputType,
